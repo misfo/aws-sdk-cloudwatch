@@ -1,3 +1,5 @@
+require 'aws/core/option_grammar/double'
+
 module AWS
   class CloudWatch
     
