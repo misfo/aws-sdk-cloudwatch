@@ -1,0 +1,349 @@
+:operations:
+- :name: DeleteAlarms
+  :method: :delete_alarms
+  :inputs:
+    AlarmNames:
+    - :membered_list:
+      - :string
+    - :required
+- :name: DescribeAlarmHistory
+  :method: :describe_alarm_history
+  :inputs:
+    AlarmName:
+    - :string
+    EndDate:
+    - :timestamp
+    HistoryItemType:
+    - :string
+    MaxRecords:
+    - :integer
+    NextToken:
+    - :string
+    StartDate:
+    - :timestamp
+  :outputs:
+    :children:
+      DescribeAlarmHistoryResult:
+        :ignore: true
+        :children:
+          AlarmHistoryItems:
+            :ignore: true
+            :children:
+              member:
+                :rename: :alarm_history_items
+                :list: true
+                :children:
+                  Timestamp:
+                    :type: :datetime
+- :name: DescribeAlarms
+  :method: :describe_alarms
+  :inputs:
+    ActionPrefix:
+    - :string
+    AlarmNamePrefix:
+    - :string
+    AlarmNames:
+    - :membered_list:
+      - :string
+    MaxRecords:
+    - :integer
+    NextToken:
+    - :string
+    StateValue:
+    - :string
+  :outputs:
+    :children:
+      DescribeAlarmsResult:
+        :ignore: true
+        :children:
+          MetricAlarms:
+            :ignore: true
+            :children:
+              member:
+                :rename: :metric_alarms
+                :list: true
+                :children:
+                  ActionsEnabled:
+                    :type: :boolean
+                  AlarmActions:
+                    :list: true
+                  AlarmConfigurationUpdatedTimestamp:
+                    :type: :datetime
+                  Dimensions:
+                    :ignore: true
+                    :children:
+                      member:
+                        :rename: :dimensions
+                        :list: true
+                  EvaluationPeriods:
+                    :type: :integer
+                  InsufficientDataActions:
+                    :list: true
+                  OKActions:
+                    :list: true
+                  StateUpdatedTimestamp:
+                    :type: :datetime
+                  Threshold:
+                    :type: :double
+- :name: DescribeAlarmsForMetric
+  :method: :describe_alarms_for_metric
+  :inputs:
+    Dimensions:
+    - :membered_list:
+      - :structure:
+          Name:
+          - :string
+          Value:
+          - :string
+    MetricName:
+    - :string
+    - :required
+    Namespace:
+    - :string
+    - :required
+    Period:
+    - :integer
+    Statistic:
+    - :string
+    Unit:
+    - :string
+  :outputs:
+    :children:
+      DescribeAlarmForMetricResult:
+        :ignore: true
+        :children:
+          MetricAlarms:
+            :ignore: true
+            :children:
+              member:
+                :rename: :metric_alarms
+                :list: true
+                :children:
+                  ActionsEnabled:
+                    :type: :boolean
+                  AlarmActions:
+                    :list: true
+                  AlarmConfigurationUpdatedTimestamp:
+                    :type: :datetime
+                  Dimensions:
+                    :ignore: true
+                    :children:
+                      member:
+                        :rename: :dimensions
+                        :list: true
+                  EvaluationPeriods:
+                    :type: :integer
+                  InsufficientDataActions:
+                    :list: true
+                  OKActions:
+                    :list: true
+                  StateUpdatedTimestamp:
+                    :type: :datetime
+                  Threshold:
+                    :type: :double
+- :name: DisableAlarmActions
+  :method: :disable_alarm_actions
+  :inputs:
+    AlarmNames:
+    - :membered_list:
+      - :string
+    - :required
+- :name: EnableAlarmActions
+  :method: :enable_alarm_actions
+  :inputs:
+    AlarmNames:
+    - :membered_list:
+      - :string
+    - :required
+- :name: GetMetricStatistics
+  :method: :get_metric_statistics
+  :inputs:
+    Dimensions:
+    - :membered_list:
+      - :structure:
+          Name:
+          - :string
+          Value:
+          - :string
+    EndTime:
+    - :timestamp
+    - :required
+    MetricName:
+    - :string
+    - :required
+    Namespace:
+    - :string
+    - :required
+    Period:
+    - :integer
+    - :required
+    StartTime:
+    - :timestamp
+    - :required
+    Statistics:
+    - :membered_list:
+      - :string
+    - :required
+    Unit:
+    - :string
+  :outputs:
+    :children:
+      GetMetricStatisticsResult:
+        :ignore: true
+        :children:
+          Datapoints:
+            :ignore: true
+            :children:
+              member:
+                :rename: :datapoints
+                :list: true
+                :children:
+                  Average:
+                    :type: :float
+                  Maximum:
+                    :type: :float
+                  Minimum:
+                    :type: :float
+                  SampleCount:
+                    :type: :float
+                  Sum:
+                    :type: :float
+                  Timestamp:
+                    :type: :datetime
+- :name: ListMetrics
+  :method: :list_metrics
+  :inputs:
+    Dimensions:
+    - :membered_list:
+      - :structure:
+          Name:
+          - :string
+          Value:
+          - :string
+    MetricName:
+    - :string
+    Namespace:
+    - :string
+    NextToken:
+    - :string
+  :outputs:
+    :children:
+      ListMetricsResult:
+        :ignore: true
+        :children:
+          Metrics:
+            :ignore: true
+            :children:
+              member:
+                :rename: :metrics
+                :list: true
+                :children:
+                  Dimensions:
+                    :ignore: true
+                    :children:
+                      member:
+                        :rename: :dimensions
+                        :list: true
+- :name: PutMetricAlarm
+  :method: :put_metric_alarm
+  :inputs:
+    ActionsEnabled:
+    - :boolean
+    AlarmActions:
+    - :membered_list:
+      - :string
+    AlarmDescription:
+    - :string
+    AlarmName:
+    - :string
+    - :required
+    ComparisonOperator:
+    - :string
+    - :required
+    Dimensions:
+    - :membered_list:
+      - :structure:
+          Name:
+          - :string
+          Value:
+          - :string
+    EvaluationPeriods:
+    - :integer
+    - :required
+    InsufficientDataActions:
+    - :membered_list:
+      - :string
+    MetricName:
+    - :string
+    - :required
+    Namespace:
+    - :string
+    - :required
+    OKActions:
+    - :membered_list:
+      - :string
+    Period:
+    - :integer
+    - :required
+    Statistic:
+    - :string
+    - :required
+    Threshold:
+    - :double
+    - :required
+    Unit:
+    - :string
+  :outputs:
+    :children:
+      PutMetricAlarmResult:
+      :ignore: true
+- :name: PutMetricData
+  :method: :put_metric_data
+  :inputs:
+    MetricData:
+    - :membered_list:
+      - :structure:
+          Dimensions:
+          - :membered_list:
+            - :structure:
+                Name:
+                - :string
+                Value:
+                - :string
+          MetricName:
+          - :string
+          StatisticValues:
+          - :membered_list:
+            - :structure:
+                Maximum:
+                - :double
+                Minimum:
+                - :double
+                SampleCount:
+                - :double
+                Sum:
+                - :double
+          Timestamp:
+          - :timestamp
+          Unit:
+          - :string
+          Value:
+          - :double
+    - :required
+    Namespace:
+    - :string
+    - :required
+- :name: SetAlarmState
+  :method: :set_alarm_state
+  :inputs:
+    AlarmName:
+    - :string
+    - :required
+    StateReason:
+    - :string
+    - :required
+    StateReasonData:
+    - :string
+    StateValue:
+    - :string
+    - :required
