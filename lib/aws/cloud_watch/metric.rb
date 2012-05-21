@@ -1,4 +1,5 @@
 require 'aws/core/inflection'
+require 'time'
 
 module AWS
   class CloudWatch
