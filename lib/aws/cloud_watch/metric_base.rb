@@ -42,7 +42,7 @@ module AWS
       def method_missing name, *args
         if args.length == 1 && name.to_s =~ /^(.*)=/ then
           @dimensions ||= {}
-          @dimensions[$1] = args[0]
+          @dimensions[$1.to_sym] = args[0]
         else
           super
         end
