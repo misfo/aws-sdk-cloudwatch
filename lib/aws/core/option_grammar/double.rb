@@ -1,3 +1,7 @@
+require 'aws/core/inflection'
+require 'aws/core/option_grammar'
+require 'aws/core/meta_utils'
+
 module AWS
   module Core
     class OptionGrammar

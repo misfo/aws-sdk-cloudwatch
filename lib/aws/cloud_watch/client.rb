@@ -1,4 +1,6 @@
+require 'aws/core'
 require 'aws/core/option_grammar/double'
+require 'yaml'
 
 module AWS
   class CloudWatch
