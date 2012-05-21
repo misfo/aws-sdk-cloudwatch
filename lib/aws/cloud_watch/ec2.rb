@@ -1,3 +1,5 @@
+require 'aws/ec2'
+
 module AWS
   class CloudWatch
     module EC2
