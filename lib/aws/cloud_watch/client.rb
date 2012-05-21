@@ -5,6 +5,15 @@ module AWS
     
     class Client < Core::Client
       
+      # this is copied from 'aws/core/client'; it's needed,
+      # otherwise it searches in the original gem directory
+      def self.api_config
+        config_file = 
+          File.dirname(File.dirname(__FILE__)) + 
+          "/api_config/#{service_name}-#{self::API_VERSION}.yml"
+        YAML.load(File.read(config_file))
+      end
+      
       API_VERSION = '2010-08-01'
       
       extend Core::Client::QueryXML
