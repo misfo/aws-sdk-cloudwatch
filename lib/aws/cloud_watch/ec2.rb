@@ -1,3 +1,4 @@
+require 'aws/cloud_watch'
 require 'aws/ec2'
 
 module AWS
