@@ -9,6 +9,7 @@ module AWS
       
       def initialize options
         super
+        @dimensions = {}
         set_attributes options
       end
       
@@ -16,7 +17,11 @@ module AWS
         attrs.keys.each do |k|
           key = k
           key = :name if key == :metric_name
-          send("#{key}=", attrs[k]) unless key == :config
+          if key.kind_of? Symbol
+            send("#{key}=", attrs[k]) unless key == :config
+          else
+            dimensions[key] = attrs[k]
+          end
         end
       end
       
@@ -27,7 +32,7 @@ module AWS
         if value.kind_of? Array
           hash = {}
           value.each do |entry|
-            hash[to_sym(entry[:name])] = entry[:value]
+            hash[entry[:name]] = entry[:value]
           end
           value = hash
         end
@@ -41,7 +46,6 @@ module AWS
       
       def method_missing name, *args
         if args.length == 1 && name.to_s =~ /^(.*)=/ then
-          @dimensions ||= {}
           @dimensions[$1.to_sym] = args[0]
         else
           super
@@ -49,7 +53,7 @@ module AWS
       end
       
       def options
-        opts = dimensions ? {:dimensions => 
+        opts = !dimensions.empty? ? {:dimensions => 
               dimensions.keys.map {|key|
               { :name => camel_case(key),
                 :value => dimensions[key] }}
