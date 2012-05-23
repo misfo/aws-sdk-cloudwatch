@@ -1,0 +1,39 @@
+= AWS SDK for Ruby -- CloudWatch API support
+
+This gem adds rudimentary support for the CloudWatch API to the official AWS SDK for Ruby.
+
+== SYNOPSIS
+
+  require 'aws/cloud_watch'
+  
+  cw = AWS::CloudWatch.new
+  
+  # all low-level API methods are supported, eg.
+  
+  cw.client.get_metric_statistics :start_time => Time.utc(2012, 5, 1).iso8601, :end_time => Time.utc(2012, 5, 7).iso8601, :namespace => 'AWS/EC2', :period => 24*60*60, :statistics => ['Average'], :metric_name => 'CPUUtilization', :dimensions => [{ :name => 'InstanceId', :value => 'i-ecb73258' }]
+  cw.client.list_metrics :namespace => 'AWS/EC2'
+  
+There is currently only some high level access to EC2 metrics:
+  
+  require 'aws/cloud_watch/ec2'
+  
+  ec2 = AWS::EC2.new
+  
+  instance = ec2.instances['i-ecb73258']
+  
+  instance.metrics
+  instance.metrics['CPUUtilization'].get :average, 24*60*60, Time.utc(2012, 5, 20)..Time.utc(2012, 5, 21)
+  
+  # there are some shortcuts:
+  
+  instance.cpu_utilization.get :average, 24*60*60, Time.utc(2012, 5, 20)..Time.utc(2012, 5, 21)
+  instance.cpu_utilization.get :average, 24*60*60, Time.utc(2012, 5, 21)        # takes a single period
+  instance.cpu_utilization.average 24*60*60, Time.utc(2012, 5, 21)
+  instance.cpu_utilization 24*60*60, Time.utc(2012, 5, 21)      # CPU utilization is averaged by default, others are summed
+  instance.cpu_utilization 24*60*60     # returns average CPU utilization for the last 24 hours
+  
+  # or, if you require 'active_support/core_ext'
+  instance.cpu_utilization 1.day
+  
+Note that variants without a time range return value directly.
+
