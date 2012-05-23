@@ -1,0 +1,2 @@
+AWS SDK for Ruby -- CloudWatch API support
+Copyright 2012 Inscitiv. All Rights Reserved.
