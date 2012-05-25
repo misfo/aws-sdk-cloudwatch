@@ -49,7 +49,11 @@ module AWS
         data = client.get_metric_statistics(options).datapoints
         
         if single_point
-          data[0][statistics[0]]
+          if data.length == 0
+            nil
+          else
+            data[0][statistics[0]]
+          end
         else
           data
         end

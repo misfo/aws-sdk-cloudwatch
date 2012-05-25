@@ -50,6 +50,16 @@ describe AWS::CloudWatch::Metric, '#get' do
     ).and_return(double :datapoints => [{:sum => :result}])
     @metric.get(:sum, 60 * 60, @end).should == :result
   end
+
+  it 'returns nil when no datapoinst are returned' do
+    @client.should_receive(:get_metric_statistics).with(\
+      :start_time => "2000-02-02T01:02:03Z",
+      :end_time => @end_iso,
+      :period => 60*60, # one hour
+      :statistics => ["Sum"]
+    ).and_return(double :datapoints => [])
+    @metric.get(:sum, 60 * 60, @end).should be_nil
+  end
 end
 
 describe AWS::CloudWatch::Metric, " synthetic methods" do
