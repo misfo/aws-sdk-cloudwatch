@@ -20,7 +20,7 @@ module AWS
     module EC2
 
       def metrics
-        @metrics ||= MetricCollection.new :namespace => 'AWS/EC2', :instance_id => id
+        @metrics ||= MetricCollection.new :namespace => 'AWS/EC2', :instance_id => id, :config => config
       end
       
       def cpu_utilization *args

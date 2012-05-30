@@ -38,7 +38,7 @@ module AWS
       end
       
       def get_by_name name
-        Metric.new(options.merge(:name => camel_case(name)))
+        Metric.new(options.merge(:name => camel_case(name), :config => config))
       end
       
       alias_method :[], :get_by_name
