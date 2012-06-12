@@ -25,8 +25,8 @@ describe AWS::CloudWatch::Metric, '#get' do
   before(:each) do
     @metric = AWS::CloudWatch::Metric.new({})
     @metric.should_receive(:client).and_return(@client = double)
-    @begin = Time.utc(2000, 2, 2, 2, 2, 2)
-    @begin_iso = "2000-02-02T02:02:02Z"
+    @begin = Time.utc(2000, 1, 2, 2, 2, 2)
+    @begin_iso = "2000-01-02T02:02:02Z"
     @end = Time.utc(2000, 2, 2, 2, 2, 3)
     @end_iso = "2000-02-02T02:02:03Z"
   end
@@ -59,6 +59,27 @@ describe AWS::CloudWatch::Metric, '#get' do
       :statistics => ["Sum"]
     ).and_return(double :datapoints => [])
     @metric.get(:sum, 60 * 60, @end).should be_nil
+  end
+  
+  it 'returns stats sorted by timestamp' do
+    datapoints = [
+      {:timestamp => Time.utc(2001, 4, 2, 5, 2, 0)},
+      {:timestamp => Time.utc(2011, 3, 1, 12, 4, 32)},
+      {:timestamp => Time.utc(2000, 1, 5, 2, 3, 0)}
+    ]
+    sorted = [
+      {:timestamp => Time.utc(2000, 1, 5, 2, 3, 0)},
+      {:timestamp => Time.utc(2001, 4, 2, 5, 2, 0)},
+      {:timestamp => Time.utc(2011, 3, 1, 12, 4, 32)}
+    ]
+    
+    @client.should_receive(:get_metric_statistics).with(\
+      :start_time => @begin_iso,
+      :end_time => @end_iso,
+      :period => 4600,
+      :statistics => ["Sum"]
+    ).and_return(double :datapoints => datapoints)
+    @metric.get(:sum, 4600, @begin..@end).should == sorted
   end
 end
 

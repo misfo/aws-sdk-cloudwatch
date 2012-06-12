@@ -55,7 +55,7 @@ module AWS
             data[0][statistics[0]]
           end
         else
-          data
+          data.sort {|a, b| a[:timestamp] <=> b[:timestamp]}
         end
       end
       
