@@ -62,6 +62,8 @@ module AWS
             return data[0][statistics[0]]
           end
         end
+        
+        return [] if range.begin + period > range.end
 
         max_period = MAX_RECORDS * period / statistics.length
         

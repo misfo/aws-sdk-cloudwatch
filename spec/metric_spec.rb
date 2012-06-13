@@ -119,6 +119,13 @@ describe AWS::CloudWatch::Metric, '#get' do
     )
     @metric.get(:sum, 300, _begin.._end).should == [1, 2, 3]
   end
+  
+  it 'returns [] trivially if range is shorter than period' do
+    _begin = Time.utc(2012, 6, 8, 17, 36, 58)
+    _end = Time.utc(2012, 6, 8, 17, 41, 57)
+    @client.should_not_receive:get_metric_statistics
+    @metric.get(:sum, 300, _begin.._end).should == []
+  end
 end
 
 describe AWS::CloudWatch::Metric, " synthetic methods" do
@@ -127,8 +134,8 @@ describe AWS::CloudWatch::Metric, " synthetic methods" do
     @metric.stub(:client => (@client = double))
     @begin = Time.utc(2000, 2, 2, 2, 2, 2)
     @begin_iso = "2000-02-02T02:02:02Z"
-    @end = Time.utc(2000, 2, 2, 2, 2, 3)
-    @end_iso = "2000-02-02T02:02:03Z"
+    @end = Time.utc(2000, 2, 2, 4, 2, 3)
+    @end_iso = "2000-02-02T04:02:03Z"
   end
   
   it "fetches proper statistic and substitutes :value field" do
