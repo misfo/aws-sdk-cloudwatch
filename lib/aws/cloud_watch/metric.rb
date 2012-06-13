@@ -29,6 +29,8 @@ module AWS
         super + [:unit]
       end
       
+      MAX_RECORDS = 1440
+      
       def get statistics, period, range = Time.now, opts = {}
         statistics = [statistics] unless statistics.kind_of? Array
         unless range.kind_of? Range
@@ -39,24 +41,38 @@ module AWS
         end
         single_point &&= statistics.length == 1
         
-        options = self.options.merge({
-          :end_time => range.end.getutc.iso8601,
-          :start_time => range.begin.getutc.iso8601,
-          :period => period.to_i,
-          :statistics => statistics.map { |s| camel_case(s) } })
-        options[:unit] = camel_case(opts[:unit]) if opts[:unit]
-        
-        data = client.get_metric_statistics(options).datapoints
+        def get_batch statistics, period, range, opts
+          options = self.options.merge({
+            :end_time => range.end.getutc.iso8601,
+            :start_time => range.begin.getutc.iso8601,
+            :period => period.to_i,
+            :statistics => statistics.map { |s| camel_case(s) } })
+          options[:unit] = camel_case(opts[:unit]) if opts[:unit]
+          
+          data = client.get_metric_statistics(options).datapoints
+        end
         
         if single_point
+          data = get_batch statistics, period, range, opts
+          
           if data.length == 0
-            nil
+            return nil
           else
-            data[0][statistics[0]]
+            return data[0][statistics[0]]
           end
-        else
-          data.sort {|a, b| a[:timestamp] <=> b[:timestamp]}
         end
+
+        max_period = MAX_RECORDS * period / statistics.length
+        
+        ranges = [range]
+        while (ranges[-1].end - ranges[-1].begin) > max_period
+          range = ranges.pop
+          pivot = range.begin + max_period
+          ranges.push range.begin..pivot
+          ranges.push pivot..range.end
+        end
+        
+        ranges.map{|range| get_batch statistics, period, range, opts}.flatten.sort{|a, b| a[:timestamp] <=> b[:timestamp]}
       end
       
       def method_missing name, *args

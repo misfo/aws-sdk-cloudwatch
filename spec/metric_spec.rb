@@ -24,7 +24,7 @@ end
 describe AWS::CloudWatch::Metric, '#get' do
   before(:each) do
     @metric = AWS::CloudWatch::Metric.new({})
-    @metric.should_receive(:client).and_return(@client = double)
+    @metric.should_receive(:client).any_number_of_times.and_return(@client = double)
     @begin = Time.utc(2000, 1, 2, 2, 2, 2)
     @begin_iso = "2000-01-02T02:02:02Z"
     @end = Time.utc(2000, 2, 2, 2, 2, 3)
@@ -80,6 +80,25 @@ describe AWS::CloudWatch::Metric, '#get' do
       :statistics => ["Sum"]
     ).and_return(double :datapoints => datapoints)
     @metric.get(:sum, 4600, @begin..@end).should == sorted
+  end
+  
+  it 'fetches many batches if number of datapoints is too large' do
+    _begin = Time.utc(2012, 01, 01, 0, 0, 0)
+    _end = Time.utc(2012, 01, 03, 0, 0, 0)
+    
+    @client.should_receive(:get_metric_statistics).with(\
+      :start_time => "2012-01-01T00:00:00Z",
+      :end_time => "2012-01-02T00:00:00Z",
+      :period => 60,
+      :statistics => ["Sum"]
+    ).and_return(double :datapoints => [1, 2, 3])
+    @client.should_receive(:get_metric_statistics).with(\
+      :start_time => "2012-01-02T00:00:00Z",
+      :end_time => "2012-01-03T00:00:00Z",
+      :period => 60,
+      :statistics => ["Sum"]
+    ).and_return(double :datapoints => [4, 5, 6])
+    @metric.get(:sum, 60, _begin.._end).should == [1, 2, 3, 4, 5, 6]
   end
 end
 
