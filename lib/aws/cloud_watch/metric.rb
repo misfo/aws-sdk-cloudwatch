@@ -48,6 +48,7 @@ module AWS
             :period => period.to_i,
             :statistics => statistics.map { |s| camel_case(s) } })
           options[:unit] = camel_case(opts[:unit]) if opts[:unit]
+          return [] if options[:end_time] == options[:start_time]
           
           data = client.get_metric_statistics(options).datapoints
         end

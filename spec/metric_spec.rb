@@ -100,6 +100,25 @@ describe AWS::CloudWatch::Metric, '#get' do
     ).and_return(double :datapoints => [4, 5, 6])
     @metric.get(:sum, 60, _begin.._end).should == [1, 2, 3, 4, 5, 6]
   end
+  
+  it 'handles minute differences in begin and end times gracefully' do
+    _begin = Time.utc(2012, 6, 8, 17, 36, 58, 901063)
+    _end = Time.utc(2012, 6, 13, 17, 36, 58, 901588)
+    
+    @client.should_receive(:get_metric_statistics).with(\
+      :start_time => "2012-06-08T17:36:58Z",
+      :end_time => "2012-06-13T17:36:58Z",
+      :period => 300,
+      :statistics => ["Sum"]
+    ).and_return(double :datapoints => [1, 2, 3])
+    @client.should_not_receive(:get_metric_statistics).with(\
+      :start_time => "2012-06-13T17:36:58Z",
+      :end_time => "2012-06-13T17:36:58Z",
+      :period => 300,
+      :statistics => ["Sum"]
+    )
+    @metric.get(:sum, 300, _begin.._end).should == [1, 2, 3]
+  end
 end
 
 describe AWS::CloudWatch::Metric, " synthetic methods" do
