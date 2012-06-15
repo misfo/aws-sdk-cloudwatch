@@ -20,11 +20,9 @@ Gem::Specification.new do |s|
   s.version     = '0.0.4'
   s.authors     = ["Rafał Rzepecki"]
   s.email       = ["divided.mind@gmail.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/inscitiv/aws-sdk-cloudwatch"
   s.summary = 'AWS CloudWatch API support'
   s.description = 'Extends the original aws-sdk gem from Amazon with support for the CloudWatch API'
-
-  s.rubyforge_project = "aws-sdk-cloudwatch"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
