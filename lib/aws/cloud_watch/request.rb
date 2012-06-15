@@ -21,7 +21,7 @@ module AWS
       include Core::Signature::Version4
       
       def service
-        'cloudwatch'
+        'monitoring'
       end
       
     end
